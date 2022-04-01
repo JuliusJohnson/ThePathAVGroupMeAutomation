@@ -9,16 +9,16 @@ connectionCursor = conn.cursor()
 
 def getServiceOrder():
     serviceItems = []
-    for row in connectionCursor.execute("SELECT ifnull(Title || ' - ' || Description, title) AS Item FROM PlanningCenterItems WHERE Service_Position = 'during' AND Item_Type != 'header' AND (DateAdded)=(SELECT MAX(DateAdded) FROM PlanningCenterItems) ORDER BY Sequence ASC"):
+    for row in connectionCursor.execute("SELECT ifnull(Title || ' - ' || Description, title) AS Item FROM PlanningCenterItems WHERE Service_Position = 'during' AND Item_Type != 'header' AND (RelatedPlan)=(SELECT MAX(RelatedPlan) FROM PlanningCenterItems) ORDER BY Sequence ASC"):
         serviceItems.append(row[0])
     return str('\n'.join(map(str,serviceItems)))
 
 def getPreService():
     serviceItems = []
-    for row in connectionCursor.execute("SELECT ifnull(Title || ' - ' || Description, title) AS Item FROM PlanningCenterItems WHERE Service_Position = 'pre' AND Item_Type != 'header' AND (DateAdded)=(SELECT MAX(DateAdded) FROM PlanningCenterItems) ORDER BY Sequence ASC"):
+    for row in connectionCursor.execute("SELECT ifnull(Title || ' - ' || Description, title) AS Item FROM PlanningCenterItems WHERE Service_Position = 'pre' AND Item_Type != 'header' AND (RelatedPlan)=(SELECT MAX(RelatedPlan) FROM PlanningCenterItems) ORDER BY Sequence ASC"):
         serviceItems.append(row[0])
     return str('\n'.join(map(str,serviceItems)))
 
-sendEmail.sendMail(getPreService,getServiceOrder())
-sendGroupme.send(getServiceOrder())
+sendEmail.sendMail(getPreService(),getServiceOrder())
+#sendGroupme.send(getServiceOrder())
 pprint(getServiceOrder())
