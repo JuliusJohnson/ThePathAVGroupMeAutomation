@@ -1,0 +1,48 @@
+SELECT
+Item
+,length
+,Sequence
+,length + ifnull(nextlength,0) + ifnull(nextlength,0) + ifnull(nextlength2,0) + ifnull(nextlength3,0) + ifnull(nextlength4,0) + ifnull(nextlength5,0) + ifnull(nextlength6,0) + ifnull(nextlength7,0) + ifnull(nextlength8,0) + ifnull(nextlength9,0) AS TotalLength
+,time('08:35' , '+' || (length + ifnull(nextlength,0) + ifnull(nextlength,0) + ifnull(nextlength2,0) + ifnull(nextlength3,0) + ifnull(nextlength4,0) + ifnull(nextlength5,0) + ifnull(nextlength6,0) + ifnull(nextlength7,0) + ifnull(nextlength8,0) + ifnull(nextlength9,0)) || ' seconds') AS EstimatedTime
+FROM
+(
+
+SELECT ifnull(Title || ' - ' || Description, title) AS Item
+	,length
+	,Sequence
+	,lag(length, 1) OVER (
+		ORDER BY Sequence
+		) AS nextlength
+	,lag(length, 2) OVER (
+		ORDER BY Sequence
+		) AS nextlength2
+	,lag(length, 3) OVER (
+		ORDER BY Sequence
+		) AS nextlength3
+	,lag(length, 4) OVER (
+		ORDER BY Sequence
+		) AS nextlength4
+	,lag(length, 5) OVER (
+		ORDER BY Sequence
+		) AS nextlength5
+	,lag(length, 6) OVER (
+		ORDER BY Sequence
+		) AS nextlength6
+	,lag(length, 7) OVER (
+		ORDER BY Sequence
+		) AS nextlength7
+	,lag(length, 8) OVER (
+		ORDER BY Sequence
+		) AS nextlength8
+	,lag(length, 9) OVER (
+		ORDER BY Sequence
+		) AS nextlength9
+FROM PlanningCenterItems
+WHERE Service_Position = 'pre'
+	AND Item_Type != 'header'
+	AND (RelatedPlan) = (
+		SELECT MAX(RelatedPlan)
+		FROM PlanningCenterItems
+		)
+		)
+ORDER BY Sequence ASC
